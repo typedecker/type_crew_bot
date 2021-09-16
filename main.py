@@ -1,4 +1,4 @@
-import discord
+import discord, os
 
 client = discord.Client()
 
@@ -17,4 +17,4 @@ async def on_message(message):
     if message.content == '$$CLAN RULES' :
         await message.channel.send('Lol I just joined. >U<')
 
-client.run('ODg3OTgwMzg3MzEyMjM0NTQ4.YUMCLg.TdSWqdUrX9iNSTvPd2i0s-iZW0o')
+client.run(os.environ['BOT_TOKEN'])
