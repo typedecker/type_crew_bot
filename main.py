@@ -1,10 +1,40 @@
 import discord, os
 
-client = discord.Client()
+ADMIN = 'typedecker#7906'
+
+intents = discord.Intents(guilds = True, dm_messages = True, members = True)
+client = discord.Client(intents = intents)
 
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+
+@client.event
+async def on_member_join(member) :
+    if member.dm_channel == None :
+        await member.create_dm()
+    member.dm_channel.send('Hi! Welcome to the TYPE CREW OFFICIAL DISCORD SERVER!, our admins will verify you as soon as they get online. Once verified you can view the channels! Please note the following clan rules(You can request to view them later by writing $$CLAN RULES TO ME) -:')
+    await member.dm_channel.send('Welcome to the TYPE CREW!')
+    await member.dm_channel.send('> Co is earned through loyalty and Activeness in War.')
+    await member.dm_channel.send('> NO ABUSES!!!(except for when joking...)')
+    await member.dm_channel.send('> Do not ask for promotions yourself you will get them when you are eligible to!')
+    await member.dm_channel.send('> If you are found inactive without any reason given, you will be kicked.')
+    await member.dm_channel.send('> Wars are optional but CLAN GAMES are mandatory.')
+    await member.dm_channel.send('> Only Active, Loyal members will be taken in CWL.')
+    await member.dm_channel.send('> No HOPPERS! You join, you stay or else you go away!')
+    await member.dm_channel.send('# TechnoSupport : Our clan supports techno in his fight against cancer!')
+    return
+
+@client.event
+async def on_guild_channel_delete(channel) :
+    delete_entry = await client.get_guild().audit_logs(action = discord.AuditLogAction.channel_delete)[-1]
+    # print('{0.user} banned {0.target}'.format(entry))
+    channel.send(str(delete_entry))
+    defaulter = delete_entry.user
+    if defaulter.name != ADMIN :
+        defaulter.remove_roles(defaulter.roles)
+        channel.send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
+    return
 
 @client.event
 async def on_message(message):
