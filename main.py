@@ -39,7 +39,7 @@ async def on_guild_channel_delete(channel) :
     # channel.send(str(delete_entry))
     defaulter = delete_entry.user
     if defaulter.name != ADMIN and defaulter.id != ADMIN_ID :
-        async for role in defaulter.roles :
+        for role in defaulter.roles :
             await defaulter.remove_roles(role)
         await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer!')
     return
