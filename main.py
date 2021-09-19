@@ -1,6 +1,7 @@
 import discord, os
 
-ADMIN = 'typedecker#7906'
+ADMIN = 'typedecker'
+ADMIN_ID = 7906
 
 intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True)
 client = discord.Client(intents = intents)
@@ -37,9 +38,9 @@ async def on_guild_channel_delete(channel) :
     # print('{0.user} banned {0.target}'.format(entry))
     # channel.send(str(delete_entry))
     defaulter = delete_entry.user
-    # if defaulter.name != ADMIN :
-    #     defaulter.remove_roles(defaulter.roles)
-    await channel.guild.channels[0].send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
+    if defaulter.name != ADMIN and defaulter.id != ADMIN_ID :
+        defaulter.remove_roles(defaulter.roles)
+        await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer!')
     return
 
 @client.event
