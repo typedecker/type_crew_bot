@@ -27,14 +27,16 @@ async def on_member_join(member) :
 
 @client.event
 async def on_guild_channel_delete(channel) :
-    delete_entries = client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete)
-    delete_entry = [entry for entry in delete_entries.flatten()][-1]
+    # delete_entries = 
+    # delete_entry = [entry for entry in client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete)][-1]
+    for entry in client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete) :
+        print(entry)
     # print('{0.user} banned {0.target}'.format(entry))
-    channel.send(str(delete_entry))
-    defaulter = delete_entry.user
-    if defaulter.name != ADMIN :
-        defaulter.remove_roles(defaulter.roles)
-        channel.guild.channels[0].send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
+    # channel.send(str(delete_entry))
+    # defaulter = delete_entry.user
+    # if defaulter.name != ADMIN :
+    #     defaulter.remove_roles(defaulter.roles)
+    #     channel.guild.channels[0].send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
     return
 
 @client.event
