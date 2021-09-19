@@ -32,12 +32,14 @@ async def on_guild_channel_delete(channel) :
     
     entries = await client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete).flatten()
     print(type(entries), entries)
+    delete_entry = entries[-1]
+    print(delete_entry)
     # print('{0.user} banned {0.target}'.format(entry))
     # channel.send(str(delete_entry))
-    # defaulter = delete_entry.user
+    defaulter = delete_entry.user
     # if defaulter.name != ADMIN :
     #     defaulter.remove_roles(defaulter.roles)
-    #     channel.guild.channels[0].send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
+    await channel.guild.channels[0].send(defaulter.name + 'tried to delete a channel he is a clan betrayer!')
     return
 
 @client.event
