@@ -14,7 +14,7 @@ async def on_ready():
 async def on_member_join(member) :
     if member.dm_channel == None :
         await member.create_dm()
-    member.dm_channel.send('Hi! Welcome to the TYPE CREW OFFICIAL DISCORD SERVER!, our admins will verify you as soon as they get online. Once verified you can view the channels! Please note the following clan rules(You can request to view them later by writing $$CLAN RULES TO ME) -:')
+    await member.dm_channel.send('Hi! Welcome to the TYPE CREW OFFICIAL DISCORD SERVER!, our admins will verify you as soon as they get online. Once verified you can view the channels! Please note the following clan rules(You can request to view them later by writing $$CLAN RULES TO ME) -:')
     await member.dm_channel.send('Welcome to the TYPE CREW!')
     await member.dm_channel.send('> Co is earned through loyalty and Activeness in War.')
     await member.dm_channel.send('> NO ABUSES!!!(except for when joking...)')
@@ -46,24 +46,48 @@ async def on_guild_channel_delete(channel) :
         #     print(role.name, role)
         #     if role.name != '@everyone' :
         #         await defaulter.remove_roles(role)
-        await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer!')
+        await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer! All his roles have been removed and the ADMIN has been notified.')
+    
+    try :
+        msg_history = await delete_entry.before.channel.history()
+        new_channel = await channel.guild.create_text_channel(channel.name, channel.overwrites, channel.category, channel.position, channel.topic, channel.slowmode_delay, channel.nsfw, channel.reason)
+        for msg in msg_history :
+            await new_channel.send(msg.author + ' : ' + msg.content)
+        await new_channel.send('All messages of the deleted channel have been restored.')
+    except :
+        await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
+        pass
+    
+    if defaulter.dm_channel == None :
+        await defaulter.create_dm()
+    
+    await defaulter.dm_channel.send('You are a CLAN BETRAYER!')
+    await defaulter.dm_channel.send('You fool, you really thought no one was there to see what you were tryna do?')
+    await defaulter.dm_channel.send('Till the day I exist, I will not let anyone harm my server.')
+    await defaulter.dm_channel.send('The channel that was deleted has been restored back to exactly how it was, so your efforts totally went into ruins!')
+    await defaulter.dm_channel.send('GET BETTER YOU FOOL, WE AND OUR SECURITY SYSTEMS ARE WAY ABOVE YOUR MORAL UNDERSTANDING AND EXISTENCE!')
+    await defaulter.dm_channel.send('Be happy, you still are in the server, I would have banned you, but ADMIN is a really nice guy he wants to talk before letting you go away.')
     return
 
 @client.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == client.user :
         return
     
-    abuses = ['fuck', 'dick', 'ass']
+    if message.author.name == ADMIN and message.author.id == ADMIN_ID and message.content.lower().startswith('$$type bot the following players did not attack ') :
+        # SEND THEM DMS
+        pass
+    
+    abuses = ['fuck', 'dick']
     for abuse in abuses :
         if message.content.lower().__contains__(abuse) :
-            await message.channel.send('No abusing' + message.author.name + 'maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
+            await message.channel.send('No abusing ' + message.author.name + ' maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
             await message.delete() # DELETES MSGS WITH ABUSES.
 
     if message.content.lower().startswith('hello type bot'):
         await message.channel.send('Hello!')
     
-    if message.content.lower() == 'who is the champ?' :
+    if message.content.lower() == '$$who is the champ?' :
         await message.channel.send('Obviously it is deadshot bro.')
     
     if message.content.lower() == '$$type bot prep day started' :
