@@ -2,7 +2,7 @@ import discord, os
 
 ADMIN = 'typedecker#7906'
 
-intents = discord.Intents(guilds = True, dm_messages = True, members = True)
+intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True)
 client = discord.Client(intents = intents)
 
 @client.event
