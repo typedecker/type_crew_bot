@@ -27,7 +27,7 @@ async def on_member_join(member) :
 
 @client.event
 async def on_guild_channel_delete(channel) :
-    delete_entry = await client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete)[-1]
+    delete_entry = [entry for entry in await client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete)][-1]
     # print('{0.user} banned {0.target}'.format(entry))
     channel.send(str(delete_entry))
     defaulter = delete_entry.user
@@ -44,11 +44,14 @@ async def on_message(message):
     abuses = ['fuck', 'dick', 'ass']
     for abuse in abuses :
         if message.content.lower().__contains__(abuse) :
+            await message.channel.send('No abusing' + message.author.name + 'maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
             await message.delete() # DELETES MSGS WITH ABUSES.
-            await message.channel.send('No abusing' + message.author + 'maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
 
     if message.content.lower().startswith('hello type bot'):
         await message.channel.send('Hello!')
+    
+    if message.content.lower() == 'who is the champ?' :
+        await message.channel.send('Obviously it is deadshot bro.')
     
     if message.content.lower() == '$$type bot prep day started' :
         await message.channel.send('Friends War prep day has started!')
