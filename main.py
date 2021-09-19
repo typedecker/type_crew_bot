@@ -33,7 +33,7 @@ async def on_guild_channel_delete(channel) :
     
     entries = await client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete).flatten()
     print(type(entries), entries)
-    delete_entry = entries[-1]
+    delete_entry = entries[0]
     print(delete_entry)
     # print('{0.user} banned {0.target}'.format(entry))
     # channel.send(str(delete_entry))
