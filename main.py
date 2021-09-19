@@ -42,7 +42,7 @@ async def on_guild_channel_delete(channel) :
         print(defaulter.roles)
         for role in defaulter.roles :
             print(role.name, role)
-            if role != '@everyone' :
+            if role.name != '@everyone' :
                 await defaulter.remove_roles(role)
         await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer!')
     return
