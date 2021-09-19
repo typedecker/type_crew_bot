@@ -29,8 +29,9 @@ async def on_member_join(member) :
 async def on_guild_channel_delete(channel) :
     # delete_entries = 
     # delete_entry = [entry for entry in client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete)][-1]
-    for entry in client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete) :
-        print(entry)
+    
+    entries = await client.get_guild(channel.guild.id).audit_logs(action = discord.AuditLogAction.channel_delete).flatten()
+    print(type(entries), entries)
     # print('{0.user} banned {0.target}'.format(entry))
     # channel.send(str(delete_entry))
     # defaulter = delete_entry.user
