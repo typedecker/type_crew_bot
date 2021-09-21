@@ -140,9 +140,9 @@ async def on_message(message):
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
-            for category in message.guild.categories :
-                    if category.name == 'CHANNEL ARCHIVES' :
-                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                    if category.name == 'archive_sample' :
+                        archive_permissions = channel.permissions
             archived = False
             for channel in message.guild.channels :
                 if channel.name == target_channel :
