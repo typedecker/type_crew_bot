@@ -99,6 +99,7 @@ async def on_message(message):
         return
     
     if message.author.name == ADMIN and message.author.id == ADMIN_ID :
+        print('ADMIN KA JADOO!!!!')
         if message.content.lower().startswith('$$type bot the following players did not attack ') :
             for user in message.mentions :
                 if user.dm_channel == None :
