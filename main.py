@@ -1,7 +1,7 @@
 import discord, os, datetime, pytz, translate
 
 ADMIN = 'typedecker'
-ADMIN_ID = 7906
+ADMIN_DISCRIMINATOR = 7906
 
 intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True)
 client = discord.Client(intents = intents)
@@ -38,7 +38,7 @@ async def on_guild_channel_delete(channel) :
     # print('{0.user} banned {0.target}'.format(entry))
     # channel.send(str(delete_entry))
     defaulter = delete_entry.user
-    if defaulter.name != ADMIN and defaulter.id != ADMIN_ID :
+    if defaulter.name != ADMIN and defaulter.discriminator != ADMIN_DISCRIMINATOR :
         print(defaulter.roles)
         await defaulter.edit(roles = [])
         print(defaulter.roles)
@@ -99,7 +99,7 @@ async def on_message(message):
     if message.author == client.user :
         return
     
-    if message.author.name == ADMIN and message.author.id == ADMIN_ID :
+    if message.author.name == ADMIN and message.author.discriminator == ADMIN_DISCRIMINATOR :
         print('ADMIN KA JADOO!!!!')
         if message.content.lower().startswith('$$type bot the following players did not attack ') :
             for user in message.mentions :
