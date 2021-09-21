@@ -95,6 +95,7 @@ async def on_guild_channel_delete(channel) :
 
 @client.event
 async def on_message(message):
+    print('MESSAGE AUTHOR NAME:', message.author.name, 'MESSAGE AUTHOR ID:', message.author.id)
     if message.author == client.user :
         return
     
