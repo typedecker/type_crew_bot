@@ -59,9 +59,9 @@ async def on_guild_channel_delete(channel) :
         #     pass
         
         archive_permissions = None
-        for category in channel.guild.categories :
-                if category.name == 'CHANNEL ARCHIVES' :
-                    archive_permissions = category.permissions
+        for channel in channel.guild.channels :
+            if channel.name == 'archive_sample' :
+                archive_permissions = channel.permissions
         
         # PRIMARY CHANNEL RESTORATION
         restored = False
@@ -111,9 +111,9 @@ async def on_message(message):
             pass
         elif message.content.lower() == '$$type bot archive all' :
             archive_permissions = None
-            for category in message.guild.categories :
-                    if category.name == 'CHANNEL ARCHIVES' :
-                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                    if channel.name == 'archive_sample' :
+                        archive_permissions = channel.permissions
             for channel in message.guild.channels :
                 if archive_permissions == None :
                     archive_permissions = channel.permissions
@@ -121,9 +121,9 @@ async def on_message(message):
                 archive_channel.permissions = archive_permissions
         elif message.content.lower() == '$$type bot restore all' :
             archive_permissions = None
-            for category in message.guild.categories :
-                    if category.name == 'CHANNEL ARCHIVES' :
-                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                    if channel.name == 'archive_sample' :
+                        archive_permissions = channel.permissions
             for channel in message.guild.channels :
                 if channel.name[-8 : ] == '_ARCHIVE' :
                     if archive_permissions != None :
@@ -141,7 +141,7 @@ async def on_message(message):
             target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
             for channel in message.guild.channels :
-                    if category.name == 'archive_sample' :
+                    if channel.name == 'archive_sample' :
                         archive_permissions = channel.permissions
             archived = False
             for channel in message.guild.channels :
@@ -161,9 +161,9 @@ async def on_message(message):
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
-            for category in message.guild.categories :
-                    if category.name == 'CHANNEL ARCHIVES' :
-                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                    if channel.name == 'archive_sample' :
+                        archive_permissions = channel.permissions
             restored = False
             for channel in message.guild.channels :
                 if channel.name == target_channel + '_ARCHIVE' :
@@ -185,9 +185,9 @@ async def on_message(message):
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
-            for category in message.guild.categories :
-                    if category.name == 'CHANNEL ARCHIVES' :
-                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                    if channel.name == 'archive_sample' :
+                        archive_permissions = channel.permissions
             deleted = False
             for channel in message.guild.channels :
                 if channel.name == target_channel + '_ARCHIVE' :
