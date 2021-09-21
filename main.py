@@ -152,9 +152,9 @@ async def on_message(message):
                     break
                 continue
             if archived :
-                await message.guild.send('The channel was archived succesfully!')
+                await message.guild.channels[0].send('The channel was archived succesfully!')
             else :
-                await message.guild.send('The channel could not be archived.')
+                await message.guild.channels[0].send('The channel could not be archived.')
         elif message.content.lower().startswith('$$type bot primary restore ') :
             content = message.content
             target_channel = content[content.index('[') + 1, content.index(']')]
