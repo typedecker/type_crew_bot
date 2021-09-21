@@ -1,7 +1,7 @@
 import discord, os, datetime, pytz, translate
 
 ADMIN = 'typedecker'
-ADMIN_DISCRIMINATOR = 7906
+ADMIN_DISCRIMINATOR = '7906'
 
 intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True)
 client = discord.Client(intents = intents)
@@ -95,7 +95,7 @@ async def on_guild_channel_delete(channel) :
 
 @client.event
 async def on_message(message):
-    print('MESSAGE AUTHOR NAME:', message.author.name, 'MESSAGE AUTHOR ID:', message.author.id)
+    print('MESSAGE AUTHOR NAME:', message.author.name, 'MESSAGE AUTHOR ID:', message.author.id, 'MESSAGE AUTHOR DISCRIMINATOR!', message.author.discriminator)
     if message.author == client.user :
         return
     
