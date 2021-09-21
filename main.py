@@ -1,4 +1,4 @@
-import discord, os
+import discord, os, datetime, pytz, translate
 
 ADMIN = 'typedecker'
 ADMIN_ID = 7906
@@ -48,25 +48,49 @@ async def on_guild_channel_delete(channel) :
         #         await defaulter.remove_roles(role)
         await channel.guild.channels[0].send(defaulter.name + ' tried to delete a channel he is a clan betrayer! All his roles have been removed and the ADMIN has been notified.')
     
-    try :
-        msg_history = await delete_entry.before.channel.history()
-        new_channel = await channel.guild.create_text_channel(channel.name, channel.overwrites, channel.category, channel.position, channel.topic, channel.slowmode_delay, channel.nsfw, channel.reason)
-        for msg in msg_history :
-            await new_channel.send(msg.author + ' : ' + msg.content)
-        await new_channel.send('All messages of the deleted channel have been restored.')
-    except :
-        await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
-        pass
-    
-    if defaulter.dm_channel == None :
-        await defaulter.create_dm()
-    
-    await defaulter.dm_channel.send('You are a CLAN BETRAYER!')
-    await defaulter.dm_channel.send('You fool, you really thought no one was there to see what you were tryna do?')
-    await defaulter.dm_channel.send('Till the day I exist, I will not let anyone harm my server.')
-    await defaulter.dm_channel.send('The channel that was deleted has been restored back to exactly how it was, so your efforts totally went into ruins!')
-    await defaulter.dm_channel.send('GET BETTER YOU FOOL, WE AND OUR SECURITY SYSTEMS ARE WAY ABOVE YOUR MORAL UNDERSTANDING AND EXISTENCE!')
-    await defaulter.dm_channel.send('Be happy, you still are in the server, I would have banned you, but ADMIN is a really nice guy he wants to talk before letting you go away.')
+        # try :
+        #     msg_history = await delete_entry.before.channel.history()
+        #     new_channel = await channel.guild.create_text_channel(channel.name, channel.overwrites, channel.category, channel.position, channel.topic, channel.slowmode_delay, channel.nsfw, channel.reason)
+        #     for msg in msg_history :
+        #         await new_channel.send(msg.author + ' : ' + msg.content)
+        #     await new_channel.send('All messages of the deleted channel have been restored.')
+        # except :
+        #     await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
+        #     pass
+        
+        archive_permissions = None
+        for category in channel.guild.categories :
+                if category.name == 'CHANNEL ARCHIVES' :
+                    archive_permissions = category.permissions
+        
+        # PRIMARY CHANNEL RESTORATION
+        restored = False
+        for channel_ in channel.guild.channels :
+            if channel_.name == channel.name + '_ARCHIVE' :
+                if archive_permissions != None :
+                    if archive_permissions == channel_.permissions :
+                        pass
+                    else :
+                        continue
+                restored_channel = await channel_.clone(channel_.name[ : -8] + '_RESTORED')
+                restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
+                restored = True
+                break
+            else :
+                continue
+        if not restored :
+            await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
+        
+        if defaulter.dm_channel == None :
+            await defaulter.create_dm()
+        
+        await defaulter.dm_channel.send('You are a CLAN BETRAYER!')
+        await defaulter.dm_channel.send('You fool, you really thought no one was there to see what you were tryna do?')
+        await defaulter.dm_channel.send('Till the day I exist, I will not let anyone harm my server.')
+        await defaulter.dm_channel.send('The channel that was deleted has been restored back to exactly how it was, so your efforts totally went into ruins!')
+        await defaulter.dm_channel.send('GET BETTER YOU FOOL, WE AND OUR SECURITY SYSTEMS ARE WAY ABOVE YOUR MORAL UNDERSTANDING AND EXISTENCE!')
+        await defaulter.dm_channel.send('Be happy, you still are in the server, I would have banned you, but ADMIN is a really nice guy he wants to talk before letting you go away.')
     return
 
 @client.event
@@ -74,8 +98,151 @@ async def on_message(message):
     if message.author == client.user :
         return
     
-    if message.author.name == ADMIN and message.author.id == ADMIN_ID and message.content.lower().startswith('$$type bot the following players did not attack ') :
-        # SEND THEM DMS
+    if message.author.name == ADMIN and message.author.id == ADMIN_ID :
+        if message.content.lower().startswith('$$type bot the following players did not attack ') :
+            for user in message.mentions :
+                if user.dm_channel == None :
+                    await user.create_dm()
+                
+                await user.dm_channel.send('Its a request to use your war attack second/both as soon as possible. If you feel like the targets left are too hard its ok, still atleast use your attack and try to claim targets from before for next war.')
+                await user.dm_channel.send('NOTE: On not using your attack, based on how loyal you are in the clan you might have to give a reason for addition in next war.')
+            pass
+        elif message.content.lower() == '$$type bot archive all' :
+            archive_permissions = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                if archive_permissions == None :
+                    archive_permissions = channel.permissions
+                archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
+                archive_channel.permissions = archive_permissions
+        elif message.content.lower() == '$$type bot restore all' :
+            archive_permissions = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_permissions = category.permissions
+            for channel in message.guild.channels :
+                if channel.name[-8 : ] == '_ARCHIVE' :
+                    if archive_permissions != None :
+                        if archive_permissions == channel.permissions :
+                            pass
+                        else :
+                            continue
+                    restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
+                    restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                    await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
+                else :
+                    continue
+        elif message.content.lower().startswith('$$type bot primary archive ') :
+            content = message.content
+            target_channel = content[content.index('[') + 1, content.index(']')]
+            archive_permissions = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_permissions = category.permissions
+            archived = False
+            for channel in message.guild.channels :
+                if channel.name == target_channel :
+                    if archive_permissions == None :
+                        archive_permissions = channel.permissions
+                    archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
+                    archive_channel.permissions = archive_permissions
+                    archived = True
+                    break
+                continue
+            if archived :
+                await message.guild.send('The channel was archived succesfully!')
+            else :
+                await message.guild.send('The channel could not be archived.')
+        elif message.content.lower().startswith('$$type bot primary restore ') :
+            content = message.content
+            target_channel = content[content.index('[') + 1, content.index(']')]
+            archive_permissions = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_permissions = category.permissions
+            restored = False
+            for channel in message.guild.channels :
+                if channel.name == target_channel + '_ARCHIVE' :
+                    if archive_permissions != None :
+                        if archive_permissions == channel.permissions :
+                            pass
+                        else :
+                            continue
+                    restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
+                    restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                    await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
+                    restored = True
+                    break
+                else :
+                    continue
+            if not restored :
+                await message.guild.channels[0].send('The channel could not be restored.(ADMIN KNOWS WHY, BUT ITS A SECRET.)')
+        elif message.content.lower().startswith('$$type bot delete primary archive ') :
+            content = message.content
+            target_channel = content[content.index('[') + 1, content.index(']')]
+            archive_permissions = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_permissions = category.permissions
+            deleted = False
+            for channel in message.guild.channels :
+                if channel.name == target_channel + '_ARCHIVE' :
+                    if archive_permissions != None :
+                        if archive_permissions == channel.permissions :
+                            pass
+                        else :
+                            continue
+                    await channel.delete()
+                    deleted = True
+                    break
+                else :
+                    continue
+            if not deleted :
+                await message.guild.channels[0].send('The channel archive could not be deleted.(ADMIN KNOWS WHY, BUT ITS A SECRET.)')
+        elif message.content.lower().startswith('$$type bot promote ') :
+            # args = message.content[19 : ]
+            # target = message.mentions[0]
+            # role_name = args.split()[1].strip()
+            content = message.content
+            # args = [k.strip() for k in content.split(',')]
+            target = message.mentions[0]
+            role_name = content[content.index('[') + 1, content.index(']')]
+            promote_role = None
+            for role in message.guild.roles :
+                if role.name == role_name :
+                    promote_role = role
+                    break
+            target_roles = target.roles
+            if not target_roles.__contains__(promote_role) :
+                target_roles.append(promote_role)
+                message.mentions[0].edit(role = target_roles)
+                message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
+                if target.dm_channel == None :
+                    target.create_dm()
+                target.dm_channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
+            else :
+                message.channel.send('The member already has that role.')
+        elif message.content.lower().startswith('$$type bot demote ') :
+            content = message.content
+            target = message.mentions[0]
+            role_name = content[content.index('[') + 1, content.index(']')]
+            demote_role = None
+            for role in message.guild.roles :
+                if role.name == role_name :
+                    demote_role = role
+                    break
+            target_roles = target.roles
+            if target_roles.__contains__(demote_role) :
+                target_roles.remove(promote_role)
+                message.mentions[0].edit(role = target_roles)
+                message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
+                if target.dm_channel == None :
+                    target.create_dm()
+                message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
+            else :
+                message.channel.send('The member already does not have that role.')
         pass
     
     abuses = ['fuck', 'dick']
@@ -117,5 +284,27 @@ async def on_message(message):
         await message.channel.send('> Only Active, Loyal members will be taken in CWL.')
         await message.channel.send('> No HOPPERS! You join, you stay or else you go away!')
         await message.channel.send('# TechnoSupport : Our clan supports techno in his fight against cancer!')
+    
+    if message.content.lower().startswith('$$time ') :
+        content = message.content
+        try :
+            tz = content[content.index('[') + 1 : content.index(']')]
+            await message.channel.send('The time in this timezone is ' + str(datetime.datetime.now(pytz.timezone(tz))))
+        except :
+            await message.channel.send('The timezone could not be found.')
+    
+    if message.content.lower().startswith('$$translate ') :
+        content = message.content
+        args = [k.strip() for k in content[12 : ].split(',')]
+        from_lang = args[0]
+        to_lang = args[1]
+        sample = args[2]
+        sample = sample[sample.index('[') + 1 : sample.index(']')]
+        try :
+            translator = translate.Translator(from_lang = from_lang, to_lang = to_lang)
+            await message.channel.send('TRANSLATED: [' + translator.translate(sample) + ']')
+        except :
+            await message.channel.send('Couldn\'t translate due to some error. Please try again.')
+        
 
 client.run(os.environ['BOT_TOKEN'])
