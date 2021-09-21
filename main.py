@@ -58,17 +58,17 @@ async def on_guild_channel_delete(channel) :
         #     await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
         #     pass
         
-        archive_permissions = None
-        for channel in channel.guild.channels :
-            if channel.name == 'archive_sample' :
-                archive_permissions = channel.permissions
+        archive_overwrites = None
+        for category in channel.guild.categories :
+                if category.name == 'CHANNEL ARCHIVES' :
+                    archive_overwrites = category.overwrites
         
         # PRIMARY CHANNEL RESTORATION
         restored = False
         for channel_ in channel.guild.channels :
             if channel_.name == channel.name + '_ARCHIVE' :
-                if archive_permissions != None :
-                    if archive_permissions == channel_.permissions :
+                if archive_overwrites != None :
+                    if archive_overwrites == channel_.overwrites :
                         pass
                     else :
                         continue
@@ -110,24 +110,25 @@ async def on_message(message):
                 await user.dm_channel.send('NOTE: On not using your attack, based on how loyal you are in the clan you might have to give a reason for addition in next war.')
             pass
         elif message.content.lower() == '$$type bot archive all' :
-            archive_permissions = None
+            archive_overwrites = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_overwrites = category.overwrites
             for channel in message.guild.channels :
-                    if channel.name == 'archive_sample' :
-                        archive_permissions = channel.permissions
-            for channel in message.guild.channels :
-                if archive_permissions == None :
-                    archive_permissions = channel.permissions
+                if archive_overwrites == None :
+                    archive_overwrites = channel.overwrites
                 archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
-                archive_channel.permissions = archive_permissions
+                for key in archive_overwrites :
+                    archive_channel.set_permissions(key, overwrite = archive_overwrites)
         elif message.content.lower() == '$$type bot restore all' :
-            archive_permissions = None
-            for channel in message.guild.channels :
-                    if channel.name == 'archive_sample' :
-                        archive_permissions = channel.permissions
+            archive_overwrites = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_overwrites = category.overwrites
             for channel in message.guild.channels :
                 if channel.name[-8 : ] == '_ARCHIVE' :
-                    if archive_permissions != None :
-                        if archive_permissions == channel.permissions :
+                    if archive_overwrites != None :
+                        if archive_overwrites == channel.overwrites :
                             pass
                         else :
                             continue
@@ -139,17 +140,18 @@ async def on_message(message):
         elif message.content.lower().startswith('$$type bot primary archive ') :
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
-            archive_permissions = None
-            for channel in message.guild.channels :
-                    if channel.name == 'archive_sample' :
-                        archive_permissions = channel.permissions
+            archive_overwrites = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_overwrites = category.overwrites
             archived = False
             for channel in message.guild.channels :
                 if channel.name == target_channel :
-                    if archive_permissions == None :
-                        archive_permissions = channel.permissions
+                    if archive_overwrites == None :
+                        archive_overwrites = channel.overwrites
                     archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
-                    archive_channel.permissions = archive_permissions
+                    for key in archive_overwrites :
+                        archive_channel.set_permissions(key, overwrite = archive_overwrites)
                     archived = True
                     break
                 continue
@@ -160,15 +162,15 @@ async def on_message(message):
         elif message.content.lower().startswith('$$type bot primary restore ') :
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
-            archive_permissions = None
-            for channel in message.guild.channels :
-                    if channel.name == 'archive_sample' :
-                        archive_permissions = channel.permissions
+            archive_overwrites = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_overwrites = category.overwrites
             restored = False
             for channel in message.guild.channels :
                 if channel.name == target_channel + '_ARCHIVE' :
-                    if archive_permissions != None :
-                        if archive_permissions == channel.permissions :
+                    if archive_overwrites != None :
+                        if archive_overwrites == channel.overwrites :
                             pass
                         else :
                             continue
@@ -184,15 +186,15 @@ async def on_message(message):
         elif message.content.lower().startswith('$$type bot delete primary archive ') :
             content = message.content
             target_channel = content[content.index('[') + 1 : content.index(']')]
-            archive_permissions = None
-            for channel in message.guild.channels :
-                    if channel.name == 'archive_sample' :
-                        archive_permissions = channel.permissions
+            archive_overwrites = None
+            for category in message.guild.categories :
+                    if category.name == 'CHANNEL ARCHIVES' :
+                        archive_overwrites = category.overwrites
             deleted = False
             for channel in message.guild.channels :
                 if channel.name == target_channel + '_ARCHIVE' :
-                    if archive_permissions != None :
-                        if archive_permissions == channel.permissions :
+                    if archive_overwrites != None :
+                        if archive_overwrites == channel.overwrites :
                             pass
                         else :
                             continue
