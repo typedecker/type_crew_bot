@@ -138,7 +138,7 @@ async def on_message(message):
                     continue
         elif message.content.lower().startswith('$$type bot primary archive ') :
             content = message.content
-            target_channel = content[content.index('[') + 1, content.index(']')]
+            target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
@@ -159,7 +159,7 @@ async def on_message(message):
                 await message.guild.channels[0].send('The channel could not be archived.')
         elif message.content.lower().startswith('$$type bot primary restore ') :
             content = message.content
-            target_channel = content[content.index('[') + 1, content.index(']')]
+            target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
@@ -183,7 +183,7 @@ async def on_message(message):
                 await message.guild.channels[0].send('The channel could not be restored.(ADMIN KNOWS WHY, BUT ITS A SECRET.)')
         elif message.content.lower().startswith('$$type bot delete primary archive ') :
             content = message.content
-            target_channel = content[content.index('[') + 1, content.index(']')]
+            target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_permissions = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
@@ -210,7 +210,7 @@ async def on_message(message):
             content = message.content
             # args = [k.strip() for k in content.split(',')]
             target = message.mentions[0]
-            role_name = content[content.index('[') + 1, content.index(']')]
+            role_name = content[content.index('[') + 1 : content.index(']')]
             promote_role = None
             for role in message.guild.roles :
                 if role.name == role_name :
@@ -229,7 +229,7 @@ async def on_message(message):
         elif message.content.lower().startswith('$$type bot demote ') :
             content = message.content
             target = message.mentions[0]
-            role_name = content[content.index('[') + 1, content.index(']')]
+            role_name = content[content.index('[') + 1 : content.index(']')]
             demote_role = None
             for role in message.guild.roles :
                 if role.name == role_name :
