@@ -212,7 +212,7 @@ async def on_message(message):
                 if channel.name == target_channel and channel.category.name == category_name :
                     if archive_overwrites == None :
                         archive_overwrites = channel.overwrites
-                        archive_channel = await channel.guild.create_text_channel(name = category_name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.', overwrites = archive_overwrites, category = category)
+                    archive_channel = await channel.guild.create_text_channel(name = category_name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.', overwrites = archive_overwrites, category = category)
                     async for msg in channel.history() :
                         await archive_channel.send(msg.author.mention + ' : ' + msg.content)
                     # archive_channel = await channel.clone(name = channel.category.name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
