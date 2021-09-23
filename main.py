@@ -81,7 +81,7 @@ async def on_guild_channel_delete(channel) :
                     if category.name == channel.category.name :
                         break
                     continue
-                restored_channel = await channel.guild.create_new_channel(name = channel.name, category = channel.category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                restored_channel = await channel.guild.create_text_channel(name = channel.name, category = channel.category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
                 async for msg in channel_.history() :
                     await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)
                 # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
@@ -185,7 +185,7 @@ async def on_message(message):
                         if category.name == category_name :
                             break
                         continue
-                    restored_channel = await channel.guild.create_new_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                    restored_channel = await channel.guild.create_text_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
                     async for msg in channel.history() :
                         await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)
                     # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
@@ -252,7 +252,7 @@ async def on_message(message):
                         if category.name == category_name :
                             break
                         continue
-                    restored_channel = await channel.guild.create_new_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                    restored_channel = await channel.guild.create_text_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
                     async for msg in channel.history() :
                         await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)    
                     # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
