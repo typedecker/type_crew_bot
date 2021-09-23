@@ -240,8 +240,8 @@ async def on_message(message):
                         archive_overwrites = category.overwrites
             restored = False
             for channel in message.guild.channels :
-                print(category_name)
-                if channel.name == category_name.replace(' ', '-') + '_' + target_channel + '_ARCHIVE' :
+                print(category_name, channel.name, category_name.replace(' ', '-'), category_name.replace(' ', '-') + '_' + target_channel + '_ARCHIVE')
+                if channel.name == category_name.replace(' ', '-') + '_' + target_channel + '_archive' :
                     if archive_overwrites != None :
                         if archive_overwrites == channel.overwrites :
                             pass
