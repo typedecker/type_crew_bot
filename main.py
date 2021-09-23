@@ -200,6 +200,7 @@ async def on_message(message):
             category_name = args[ : args.index('_')]
             target_channel = args[args.index('_') + 1 : ]
             ###
+            print(args, category_name, target_channel, [c.name for c in message.channel.categories])
             # target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_overwrites = None
             for category in message.guild.categories :
