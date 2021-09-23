@@ -1,5 +1,7 @@
 import discord, os, datetime, pytz, translate
 
+# DO ARCHIVE DELETION CODE FOR SECONDARY ARCHIVER V/ DONE
+
 ADMIN = 'typedecker'
 ADMIN_DISCRIMINATOR = '7906'
 
@@ -58,29 +60,65 @@ async def on_guild_channel_delete(channel) :
         #     await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
         #     pass
         
+        ###
+        category_name = channel.category.name
+        ###
+        # target_channel = content[content.index('[') + 1 : content.index(']')]
         archive_overwrites = None
         for category in channel.guild.categories :
                 if category.name == 'CHANNEL ARCHIVES' :
                     archive_overwrites = category.overwrites
-        
-        # PRIMARY CHANNEL RESTORATION
         restored = False
         for channel_ in channel.guild.channels :
-            if channel_.name == channel.name + '_ARCHIVE' :
+            if channel_.name == category_name + '_' + channel.name + '_ARCHIVE' :
                 if archive_overwrites != None :
                     if archive_overwrites == channel_.overwrites :
                         pass
                     else :
                         continue
-                restored_channel = await channel_.clone(channel_.name[ : -8] + '_RESTORED')
-                restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                # category_name = channel.name[ : channel.name.index('_')]
+                for category in channel.guild.categories :
+                    if category.name == channel.category.name :
+                        break
+                    continue
+                restored_channel = await channel.guild.create_new_channel(name = channel.name, category = channel.category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                for msg in channel_.history() :
+                    await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)
+                # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
+                # restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
                 await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
                 restored = True
                 break
             else :
                 continue
         if not restored :
-            await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
+            await channel.guild.channels[0].send('The channel could not be restored.(ADMIN KNOWS WHY, BUT ITS A SECRET.)')
+        ###
+        
+        
+        # archive_overwrites = None
+        # for category in channel.guild.categories :
+        #         if category.name == 'CHANNEL ARCHIVES' :
+        #             archive_overwrites = category.overwrites
+        
+        # # PRIMARY CHANNEL RESTORATION
+        # restored = False
+        # for channel_ in channel.guild.channels :
+        #     if channel_.name == channel.category.name + '_'+ channel.name + '_ARCHIVE' :
+        #         if archive_overwrites != None :
+        #             if archive_overwrites == channel_.overwrites :
+        #                 pass
+        #             else :
+        #                 continue
+        #         restored_channel = await channel_.clone(channel_.name[ : -8] + '_RESTORED')
+        #         restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+        #         await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
+        #         restored = True
+        #         break
+        #     else :
+        #         continue
+        # if not restored :
+        #     await channel.guild.channels[0].send('Unfortunately the deleted channel could not be restored. I am sorry I tried my best to get it back!')
         
         if defaulter.dm_channel == None :
             await defaulter.create_dm()
@@ -91,6 +129,12 @@ async def on_guild_channel_delete(channel) :
         await defaulter.dm_channel.send('The channel that was deleted has been restored back to exactly how it was, so your efforts totally went into ruins!')
         await defaulter.dm_channel.send('GET BETTER YOU FOOL, WE AND OUR SECURITY SYSTEMS ARE WAY ABOVE YOUR MORAL UNDERSTANDING AND EXISTENCE!')
         await defaulter.dm_channel.send('Be happy, you still are in the server, I would have banned you, but ADMIN is a really nice guy he wants to talk before letting you go away.')
+        
+        admin = [member for member in channel.guild.members if member.name == ADMIN and member.discriminator == ADMIN_DISCRIMINATOR][0]
+        if admin.dm_channel == None :
+            await admin.create_dm()
+        
+        await admin.dm_channel.send(defaulter.mention + ' tried to delete the channel [' + channel.name + '] of the category - [' + channel.category.name + ']. I have removed all his roles and roasted him on DMs! I have also tried to restore the channel. Please check if everything is alright once you are on ADMIN. :)')
     return
 
 @client.event
@@ -117,9 +161,13 @@ async def on_message(message):
             for channel in message.guild.channels :
                 if archive_overwrites == None :
                     archive_overwrites = channel.overwrites
-                archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
-                for key in archive_overwrites :
-                    archive_channel.set_permissions(key, overwrite = archive_overwrites)
+                archive_channel = await channel.guild.create_text_channel(name = channel.category.name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.', overwrites = archive_overwrites, category = category)
+                for msg in channel.history() :
+                    await archive_channel.send(msg.author.mention + ' : ' + msg.content)
+                # archive_channel = await channel.clone(name = channel.category.name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
+                # for key in archive_overwrites :
+                #     archive_channel.set_permissions(key, overwrite = archive_overwrites)
+                # archive_channel.category = category
         elif message.content.lower() == '$$type bot restore all' :
             archive_overwrites = None
             for category in message.guild.categories :
@@ -132,26 +180,44 @@ async def on_message(message):
                             pass
                         else :
                             continue
-                    restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
-                    restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                    category_name = channel.name[ : channel.name.index('_')]
+                    for category in channel.guild.categories :
+                        if category.name == category_name :
+                            break
+                        continue
+                    restored_channel = await channel.guild.create_new_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                    for msg in channel.history() :
+                        await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)
+                    # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
+                    # restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
                     await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
                 else :
                     continue
-        elif message.content.lower().startswith('$$type bot primary archive ') :
+        elif message.content.lower().startswith('$$type bot archive ') :
             content = message.content
-            target_channel = content[content.index('[') + 1 : content.index(']')]
+            ###
+            args = content[content.index('[') + 1 : content.index(']')]
+            category_name = args[ : args.index('_')]
+            target_channel = args[args.index('_') + 1 : ]
+            ###
+            # target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_overwrites = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
                         archive_overwrites = category.overwrites
+                        break
             archived = False
             for channel in message.guild.channels :
-                if channel.name == target_channel :
+                if channel.name == target_channel and channel.category.name == category_name :
                     if archive_overwrites == None :
                         archive_overwrites = channel.overwrites
-                    archive_channel = await channel.clone(name = channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
-                    for key in archive_overwrites :
-                        archive_channel.set_permissions(key, overwrite = archive_overwrites)
+                        archive_channel = await channel.guild.create_text_channel(name = category_name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.', overwrites = archive_overwrites, category = category)
+                    for msg in channel.history() :
+                        await archive_channel.send(msg.author.mention + ' : ' + msg.content)
+                    # archive_channel = await channel.clone(name = channel.category.name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.')
+                    # for key in archive_overwrites :
+                    #     archive_channel.set_permissions(key, overwrite = archive_overwrites)
+                    # archive_channel.category = category
                     archived = True
                     break
                 continue
@@ -159,23 +225,36 @@ async def on_message(message):
                 await message.guild.channels[0].send('The channel was archived succesfully!')
             else :
                 await message.guild.channels[0].send('The channel could not be archived.')
-        elif message.content.lower().startswith('$$type bot primary restore ') :
+        elif message.content.lower().startswith('$$type bot restore ') :
             content = message.content
-            target_channel = content[content.index('[') + 1 : content.index(']')]
+            ###
+            args = content[content.index('[') + 1 : content.index(']')]
+            category_name = args[ : args.index('_')]
+            target_channel = args[args.index('_') + 1 : ]
+            ###
+            # target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_overwrites = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
                         archive_overwrites = category.overwrites
             restored = False
             for channel in message.guild.channels :
-                if channel.name == target_channel + '_ARCHIVE' :
+                if channel.name == category_name + '_' + target_channel + '_ARCHIVE' :
                     if archive_overwrites != None :
                         if archive_overwrites == channel.overwrites :
                             pass
                         else :
                             continue
-                    restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
-                    restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
+                    # category_name = channel.name[ : channel.name.index('_')]
+                    for category in channel.guild.categories :
+                        if category.name == category_name :
+                            break
+                        continue
+                    restored_channel = await channel.guild.create_new_channel(name = channel.name[channel.name.index('_') + 1 : -8], category = category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
+                    for msg in channel.history() :
+                        await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)    
+                    # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
+                    # restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
                     await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
                     restored = True
                     break
@@ -183,16 +262,21 @@ async def on_message(message):
                     continue
             if not restored :
                 await message.guild.channels[0].send('The channel could not be restored.(ADMIN KNOWS WHY, BUT ITS A SECRET.)')
-        elif message.content.lower().startswith('$$type bot delete primary archive ') :
+        elif message.content.lower().startswith('$$type bot delete archive ') :
             content = message.content
-            target_channel = content[content.index('[') + 1 : content.index(']')]
+            ###
+            args = content[content.index('[') + 1 : content.index(']')]
+            category_name = args[ : args.index('_')]
+            target_channel = args[args.index('_') + 1 : ]
+            ###
+            # target_channel = content[content.index('[') + 1 : content.index(']')]
             archive_overwrites = None
             for category in message.guild.categories :
                     if category.name == 'CHANNEL ARCHIVES' :
                         archive_overwrites = category.overwrites
             deleted = False
             for channel in message.guild.channels :
-                if channel.name == target_channel + '_ARCHIVE' :
+                if channel.name == category_name + '_' + target_channel + '_ARCHIVE' :
                     if archive_overwrites != None :
                         if archive_overwrites == channel.overwrites :
                             pass
