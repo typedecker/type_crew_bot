@@ -5,7 +5,7 @@ import discord, os, datetime, pytz, translate
 ADMIN = 'typedecker'
 ADMIN_DISCRIMINATOR = '7906'
 
-intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True)
+intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True, invites = True)
 client = discord.Client(intents = intents)
 
 @client.event
@@ -450,7 +450,7 @@ async def on_message(message):
     if message.content.lower() == '$$type bot update-news' :
         info_ch = None
         for channel in message.guild.channels :
-            if cat.name == 'update_info_type_bot' :
+            if channel.name == 'update_info_type_bot' :
                 info_ch = channel
                 break
         
