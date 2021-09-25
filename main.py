@@ -324,9 +324,10 @@ async def on_message(message):
             #         break
             target_roles = [] + target.roles.copy()
             if not target_roles.__contains__(promote_role) :
-                target_roles += [promote_role]
-                print(target_roles)
-                await message.mentions[0].edit(role = target_roles.copy())
+                # target_roles += [promote_role]
+                # print(target_roles)
+                await message.mentions[0].add_roles([promote_role])
+                # await message.mentions[0].edit(role = target_roles.copy())
                 await message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
                 if target.dm_channel == None :
                     await target.create_dm()
