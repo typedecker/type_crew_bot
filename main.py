@@ -324,11 +324,11 @@ async def on_message(message):
             target_roles = target.roles
             if not target_roles.__contains__(promote_role) :
                 target_roles.append(promote_role)
-                message.mentions[0].edit(role = target_roles)
-                message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
+                await message.mentions[0].edit(role = target_roles)
+                await message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
                 if target.dm_channel == None :
                     target.create_dm()
-                target.dm_channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
+                await target.dm_channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
             else :
                 message.channel.send('The member already has that role.')
         elif message.content.lower().startswith('$$type bot demote ') :
