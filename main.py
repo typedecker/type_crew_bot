@@ -98,7 +98,7 @@ async def on_guild_channel_delete(channel) :
                     continue
                 restored_channel = await channel.guild.create_text_channel(name = channel.name, category = channel.category, reason = 'TYPE BOT RESTORATION PROCESS RESTORED THIS DELETED CHANNEL.[DO NOT ASK WHY!]')
                 async for msg in channel_.history(oldest_first = True) :
-                    await restored_channel.send(msg.mentions[0].mention + ' : ' + msg.content)
+                    await restored_channel.send(msg.content)
                 # restored_channel = await channel.clone(channel.name[ : -8] + '_RESTORED')
                 # restored_channel.permissions = discord.Permissions(send_messages = False, read_messages = True)
                 await restored_channel.send('@everyone THE CHANNEL HAS BEEN RESTORED.')
@@ -313,18 +313,20 @@ async def on_message(message):
             content = message.content
             # args = [k.strip() for k in content.split(',')]
             target = message.mentions[0]
-            role_name = content[content.index('[') + 1 : content.index(']')]
-            print(role_name, 'TO MATCH', target.name)
-            promote_role = None
-            for role in message.guild.roles :
-                print(role.name, 'LOOP VAL', role_name == role.name)
-                if role.name == role_name :
-                    promote_role = role
-                    break
-            target_roles = target.roles
+            promote_role = message.role_mentions[0]
+            # role_name = content[content.index('[') + 1 : content.index(']')]
+            # print(role_name, 'TO MATCH', target.name)
+            # promote_role = None
+            # for role in message.guild.roles :
+            #     print(role.name, 'LOOP VAL', role_name == role.name)
+            #     if role.name == role_name :
+            #         promote_role = role
+            #         break
+            target_roles = [] + target.roles.copy()
             if not target_roles.__contains__(promote_role) :
-                target_roles.append(promote_role)
-                await message.mentions[0].edit(role = target_roles)
+                target_roles += [promote_role]
+                print(target_roles)
+                await message.mentions[0].edit(role = target_roles.copy())
                 await message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
                 if target.dm_channel == None :
                     await target.create_dm()
