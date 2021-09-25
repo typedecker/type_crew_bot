@@ -317,7 +317,7 @@ async def on_message(message):
             print(role_name, 'TO MATCH', target.name)
             promote_role = None
             for role in message.guild.roles :
-                print(role.name, 'LOOP VAL')
+                print(role.name, 'LOOP VAL', role_name == role.name)
                 if role.name == role_name :
                     promote_role = role
                     break
@@ -327,7 +327,7 @@ async def on_message(message):
                 await message.mentions[0].edit(role = target_roles)
                 await message.channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
                 if target.dm_channel == None :
-                    target.create_dm()
+                    await target.create_dm()
                 await target.dm_channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
             else :
                 message.channel.send('The member already has that role.')
