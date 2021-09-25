@@ -454,7 +454,7 @@ async def on_message(message):
                 info_ch = channel
                 break
         
-        for info_msg in info_ch.history(oldest_first = True) :
+        async for info_msg in info_ch.history(oldest_first = True) :
             await message.channel.send(info_msg.content)
 
 client.run(os.environ['BOT_TOKEN'])
