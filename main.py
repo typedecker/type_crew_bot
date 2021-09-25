@@ -40,7 +40,22 @@ async def on_invite_create(invite) :
         await invite.delete()
         await inviter.edit(roles = [])
         await crew_guild.channels[0].send(inviter.name + ' tried to send an invite. He has been demoted and all his roles have been shed off.')
-        # ALSO ARCHIVE ALL CHANNELS AFTER THIS PART.... ||TODO||
+        # ALSO ARCHIVE ALL CHANNELS AFTER THIS PART....
+        archive_overwrites = None
+        for category in crew_guild.categories :
+            if category.name == 'CHANNEL ARCHIVES' :
+                archive_overwrites = category.overwrites
+        for channel in crew_guild.channels :
+            if archive_overwrites == None :
+                archive_overwrites = channel.overwrites
+            archive_channel = await crew_guild.create_text_channel(name = channel.category.name + '_' + channel.name + '_ARCHIVE', reason = 'ARCHIVING THE CHANNEL AS PER INSTRUCTIONS FROM ADMIN.', overwrites = archive_overwrites, category = category)
+            async for msg in channel.history(oldest_first = True) :
+                await archive_channel.send(msg.author.mention + ' : ' + msg.content)
+        admin = [member for member in crew_guild.members if member.name == ADMIN and member.discriminator == ADMIN_DISCRIMINATOR][0]
+        if admin.dm_channel == None :
+            await admin.create_dm()
+        
+        await admin.dm_channel.send(inviter.name + ' tried to send an invite, all his roles have been shed off. Please look into the matter ADMIN. Thx :)')
         return
 
 @client.event
@@ -149,7 +164,7 @@ async def on_guild_channel_delete(channel) :
         if admin.dm_channel == None :
             await admin.create_dm()
         
-        await admin.dm_channel.send(defaulter.mention + ' tried to delete the channel [' + channel.name + '] of the category - [' + channel.category.name + ']. I have removed all his roles and roasted him on DMs! I have also tried to restore the channel. Please check if everything is alright once you are on ADMIN. :)')
+        await admin.dm_channel.send(defaulter.name + ' tried to delete the channel [' + channel.name + '] of the category - [' + channel.category.name + ']. I have removed all his roles and roasted him on DMs! I have also tried to restore the channel. Please check if everything is alright once you are on ADMIN. :)')
     return
 
 @client.event
@@ -337,20 +352,22 @@ async def on_message(message):
         elif message.content.lower().startswith('$$type bot demote ') :
             content = message.content
             target = message.mentions[0]
-            role_name = content[content.index('[') + 1 : content.index(']')]
-            demote_role = None
-            for role in message.guild.roles :
-                if role.name == role_name :
-                    demote_role = role
-                    break
-            target_roles = target.roles
+            # role_name = content[content.index('[') + 1 : content.index(']')]
+            demote_role = message.role_mentions[0]
+            # demote_role = None
+            # for role in message.guild.roles :
+            #     if role.name == role_name :
+            #         demote_role = role
+            #         break
+            target_roles = [] + target.roles.copy()
             if target_roles.__contains__(demote_role) :
-                target_roles.remove(promote_role)
-                message.mentions[0].edit(role = target_roles)
-                message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
+                # target_roles.remove(demote_role)
+                # message.mentions[0].edit(role = target_roles)
+                await message.mentions[0].remove_roles(demote_role)
+                await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
                 if target.dm_channel == None :
-                    target.create_dm()
-                message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
+                    await target.create_dm()
+                await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
             else :
                 message.channel.send('The member already does not have that role.')
         pass
@@ -415,6 +432,29 @@ async def on_message(message):
             await message.channel.send('TRANSLATED: [' + translator.translate(sample) + ']')
         except :
             await message.channel.send('Couldn\'t translate due to some error. Please try again.')
+    
+    if message.content.lower() == '$$type bot help' :
+        help_cat = None
+        for cat in message.guild.categories :
+            if cat.name == 'help_info_type_bot' :
+                help_cat = cat
+                break
         
+        await message.channel.send('The following are the commands(that are valid for you), what they do and how to use them.')
+        for channel in help_cat.channels :
+            cmd_name, desc_str = channel.name, ''
+            async for msg in channel.history(oldest_first = True) :
+                desc_str += msg.content + '\n'
+            await message.channel.send('> ' + cmd_name + ' || ' + desc_str)
+    
+    if message.content.lower() == '$$type bot update-news' :
+        info_ch = None
+        for channel in message.guild.channels :
+            if cat.name == 'update_info_type_bot' :
+                info_ch = channel
+                break
+        
+        for info_msg in info_ch.history(oldest_first = True) :
+            await message.channel.send(info_msg.content)
 
 client.run(os.environ['BOT_TOKEN'])
