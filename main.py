@@ -370,6 +370,10 @@ async def on_message(message):
                 await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
             else :
                 message.channel.send('The member already does not have that role.')
+        elif message.content.lower().startswith('$$type bot mute ') :
+            target = message.mentions[0]
+            await target.edit(roles = [])
+            await message.channel.send('@everyone [' + target.mention + '] has been muted.')
         pass
     
     abuses = ['fuck', 'dick']
