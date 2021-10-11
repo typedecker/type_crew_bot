@@ -11,6 +11,9 @@ client = discord.Client(intents = intents)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    game = discord.Game("Playing CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
+    await client.change_presence(status = discord.Status.idle, activity = game)
+    return
 
 @client.event
 async def on_member_join(member) :
