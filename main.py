@@ -12,7 +12,7 @@ client = discord.Client(intents = intents)
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
     game = discord.Game("Playing CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
-    await client.change_presence(status = discord.Status.idle, activity = game)
+    await client.change_presence(activity = game)
     return
 
 @client.event
