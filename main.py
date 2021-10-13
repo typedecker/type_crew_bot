@@ -1,6 +1,7 @@
 import discord, os, datetime, pytz, translate
 
 # DO ARCHIVE DELETION CODE FOR SECONDARY ARCHIVER V/ DONE
+# UPLOAD CODE ON DC AND DEPLOY
 
 ADMIN = 'typedecker'
 ADMIN_DISCRIMINATOR = '7906'
@@ -11,7 +12,7 @@ client = discord.Client(intents = intents)
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
-    game = discord.Game("Playing CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
+    game = discord.Game("CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
     await client.change_presence(activity = game)
     return
 
@@ -351,7 +352,7 @@ async def on_message(message):
                     await target.create_dm()
                 await target.dm_channel.send('Congratulations ' + target.name + '! You have been promoted to ' + promote_role.name)
             else :
-                message.channel.send('The member already has that role.')
+                await message.channel.send('The member already has that role.')
         elif message.content.lower().startswith('$$type bot demote ') :
             content = message.content
             target = message.mentions[0]
@@ -372,18 +373,38 @@ async def on_message(message):
                     await target.create_dm()
                 await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
             else :
-                message.channel.send('The member already does not have that role.')
+                await message.channel.send('The member already does not have that role.')
         elif message.content.lower().startswith('$$type bot mute ') :
+            target = message.mentions[0]
+            await target.edit(roles = [])
+            await message.channel.send('@everyone [' + target.mention + '] has been muted.')
+        elif message.content.lower().startswith('$$type bot abuse-ban ') :
+            target = message.mentions[0]
+            promote_role = [role for role in message.channel.guild.roles if role.name == 'ABUSE-BANNED'][0]
+            target_roles = [] + target.roles.copy()
+            if not target_roles.__contains__(promote_role) :
+                await message.mentions[0].add_roles(promote_role)
+                await message.channel.send('@everyone [' + target.mention + '] has been abuse muted. Now they cannot abuse in any category/channel (even the abuse-allowed channels).')
+            else :
+                await message.channel.send('The member already has that role.')
             target = message.mentions[0]
             await target.edit(roles = [])
             await message.channel.send('@everyone [' + target.mention + '] has been muted.')
         pass
     
     abuses = ['fuck', 'dick']
-    for abuse in abuses :
-        if message.content.lower().__contains__(abuse) :
-            await message.channel.send('No abusing ' + message.author.name + ' maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
-            await message.delete() # DELETES MSGS WITH ABUSES.
+    abuse_accepting_channels = ['clan-betrayer-greetings', 'clan-betrayers-roasting-cell', 'abusing-the-betrayers']
+    if message.channel.name in abuse_accepting_channels :
+        if [role.name for role in message.author.roles].__contains__('ABUSE-BANNED') :
+            for abuse in abuses :
+                if message.content.lower().__contains__(abuse) and message.author.name != ADMIN and message.author.discriminator != ADMIN_DISCRIMINATOR :
+                    await message.channel.send('No abusing ' + message.author.name + ' maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
+                    await message.delete() # DELETES MSGS WITH ABUSES.
+    else :
+        for abuse in abuses :
+            if message.content.lower().__contains__(abuse) and message.author.name != ADMIN and message.author.discriminator != ADMIN_DISCRIMINATOR :
+                await message.channel.send('No abusing ' + message.author.name + ' maybe you did not read our clan rules properly. Make sure to do so you can type \"$$CLAN RULES\" as a command and I will explain them to ya!')
+                await message.delete() # DELETES MSGS WITH ABUSES.
 
     if message.content.lower().startswith('hello type bot'):
         await message.channel.send('Hello!')
