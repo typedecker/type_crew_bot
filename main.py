@@ -1,4 +1,4 @@
-import discord, os, datetime, pytz, translate
+import discord, os, datetime, pytz, translate, asyncio
 
 # DO ARCHIVE DELETION CODE FOR SECONDARY ARCHIVER V/ DONE
 # UPLOAD CODE ON DC AND DEPLOY
@@ -9,9 +9,41 @@ ADMIN_DISCRIMINATOR = '7906'
 intents = discord.Intents(guilds = True, dm_messages = True, members = True, messages = True, guild_messages = True, invites = True)
 client = discord.Client(intents = intents)
 
+async def tasks_loop() :
+    # DO STUFF HERE, ONCE READY, THEN UNCOMMENT THE SECOND LINE OF ON_READY FUNC
+    # https://stackoverflow.com/questions/64173987/how-to-make-the-bot-run-a-defined-function-at-a-specific-time-everyday-in-discor
+    
+    # schedule_time = datetime.datetime.today() #(year, month, day, hour, minute, second, microsecond)
+    # schedule_time = datetime.datetime(schedule_time.year, schedule_time.month, schedule_time.day, 5, 00, 000000)
+    
+    await client.wait_until_ready()
+    
+    while not client.is_closed():
+        # TIMEZONE BASED GOOD MORNING
+        # now = datetime.datetime.now()
+        timezone_storage_channel = [channel for channel in client.guilds[0].channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0] # TYPE BOT IS ONLY FOR OUR SERVER SO ONLY OUR SERVER IS THERE IN THE LIST.
+        timezones = list(timezone_storage_channel.history().flatten())
+        if timezones != [] :
+            for tz_entry in timezones :
+                tz = tz_entry.content[ : tz_entry.content.index(':')]
+                now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
+                morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
+                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 5, 00, 000000, tzinfo = morn_time.tzinfo)
+                if morn_time <= now_for_tz:
+                    #JOB
+                    good_morn_channel = [channel for channel in client.guilds[0] if channel.name == 'good-mornings' and channel.category.name == 'NORMAL CONVERSATIONS'][0]
+                    await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions] + '!'))
+                    #add one day to schedule_time to repeat on next day
+                    morn_time+= datetime.timedelta(days = 1)
+                # ----------------------------
+        await asyncio.sleep(20)
+    return
+
 @client.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(client))
+    client.loop.create_task(tasks_loop())
+    
     game = discord.Game("CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
     await client.change_presence(activity = game)
     return
@@ -460,6 +492,20 @@ async def on_message(message):
             await message.channel.send('TRANSLATED: [' + translator.translate(sample) + ']')
         except :
             await message.channel.send('Couldn\'t translate due to some error. Please try again.')
+    
+    if message.content.lower() == '$$type bot tz_register ' :
+        tz_name = message.content[message.content.index('[') + 1 : message.content.index(']')]
+        timezone_storage_channel = [channel for channel in message.guild.channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0]
+        found = False
+        for tz_entry in timezone_storage_channel.history() :
+            if tz_entry.content[ : tz_entry.content.index(':')] == tz_name :
+                if message.author in tz_entry.mentions :
+                    message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
+                else :
+                    tz_entry.edit(tz_entry.content + message.author.mention)
+                found = True
+        if not found :
+            await timezone_storage_channel.send(tz_name + ':' + message.author.mention)
     
     if message.content.lower() == '$$type bot help' :
         help_cat = None
