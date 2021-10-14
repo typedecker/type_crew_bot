@@ -22,7 +22,7 @@ async def tasks_loop() :
         # TIMEZONE BASED GOOD MORNING
         # now = datetime.datetime.now()
         timezone_storage_channel = [channel for channel in client.guilds[0].channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0] # TYPE BOT IS ONLY FOR OUR SERVER SO ONLY OUR SERVER IS THERE IN THE LIST.
-        timezones = list(timezone_storage_channel.history().flatten())
+        timezones = await timezone_storage_channel.history().flatten()
         if timezones != [] :
             for tz_entry in timezones :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
