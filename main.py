@@ -498,7 +498,7 @@ async def on_message(message):
         tz_name = message.content[message.content.index('[') + 1 : message.content.index(']')]
         timezone_storage_channel = [channel for channel in message.guild.channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0]
         found = False
-        for tz_entry in timezone_storage_channel.history() :
+        async for tz_entry in timezone_storage_channel.history() :
             if tz_entry.content[ : tz_entry.content.index(':')] == tz_name :
                 if message.author in tz_entry.mentions :
                     await message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
