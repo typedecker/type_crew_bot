@@ -493,7 +493,7 @@ async def on_message(message):
         except :
             await message.channel.send('Couldn\'t translate due to some error. Please try again.')
     
-    if message.content.lower() == '$$type bot tz_register ' :
+    if message.content.lower().startswith('$$type bot tz_register ') :
         print('SHOULD HAVE DONE SOMETHING')
         tz_name = message.content[message.content.index('[') + 1 : message.content.index(']')]
         timezone_storage_channel = [channel for channel in message.guild.channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0]
