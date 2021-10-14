@@ -494,18 +494,21 @@ async def on_message(message):
             await message.channel.send('Couldn\'t translate due to some error. Please try again.')
     
     if message.content.lower() == '$$type bot tz_register ' :
+        print('SHOULD HAVE DONE SOMETHING')
         tz_name = message.content[message.content.index('[') + 1 : message.content.index(']')]
         timezone_storage_channel = [channel for channel in message.guild.channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0]
         found = False
         for tz_entry in timezone_storage_channel.history() :
             if tz_entry.content[ : tz_entry.content.index(':')] == tz_name :
                 if message.author in tz_entry.mentions :
-                    message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
+                    await message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
                 else :
-                    tz_entry.edit(tz_entry.content + message.author.mention)
+                    await tz_entry.edit(tz_entry.content + message.author.mention)
+                    print('LOLOL DOING')
                 found = True
         if not found :
             await timezone_storage_channel.send(tz_name + ':' + message.author.mention)
+            print('REPLACED')
     
     if message.content.lower() == '$$type bot help' :
         help_cat = None
