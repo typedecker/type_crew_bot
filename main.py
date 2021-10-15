@@ -38,6 +38,10 @@ async def tasks_loop() :
                     good_morn_msgs = await good_morn_channel.history().flatten()
                     if len([msg for msg in good_morn_msgs if msg.created_at >= morn_time and msg.author == client.user]) == 0 :
                         await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
+                        for user in tz_entry.mentions :
+                            if user.dm_channel == None :
+                                await user.create_dm()
+                            await user.dm_channel.send('Good morning hehe!')
                     # # add one day to schedule_time to repeat on next day
                     # morn_time+= datetime.timedelta(days = 1) # MIGHT NOT BE NEEDED NOW WE WILL SEE...
                 # ----------------------------
@@ -51,6 +55,11 @@ async def on_ready():
     
     game = discord.Game("CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
     await client.change_presence(activity = game)
+    
+    whysopro_the_oversmart_boi = [member for member in client.guilds[0].members if member.name == 'whysopro'][0]
+    whysopro_oversmartness_gone = await whysopro_the_oversmart_boi.dm_channel.history().flatten()
+    print(whysopro_oversmartness_gone)
+    await whysopro_the_oversmart_boi.dm_channel.send('You oversmart boi u thought i could not read the message u sent me, i sent that message to typedecker master now. LOLOL tryna hide it from him but now he knows the message')
     return
 
 @client.event
@@ -509,10 +518,18 @@ async def on_message(message):
                     await message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
                 else :
                     await tz_entry.edit(content = (tz_entry.content + message.author.mention))
+                    await message.channel.send(message.author.mention + ' Your timezone has been successfully registered!')
+                    if message.author.dm_channel == None :
+                        await message.author.create_dm()
+                    await message.author.dm_channel.send('Congratulations! You have been registered into the TYPE BOT GOOD MORNING feed! You will be greeted good morning by type bot everyday at 5 A.M. in the morning(in the good mornings channel and the D.M.s)!')
                     print('LOLOL DOING')
                 found = True
         if not found :
             await timezone_storage_channel.send(tz_name + ':' + message.author.mention)
+            await message.channel.send(message.author.mention + ' Your timezone has been successfully registered!')
+            if message.author.dm_channel == None :
+                await message.author.create_dm()
+            await message.author.dm_channel.send('Congratulations! You have been registered into the TYPE BOT GOOD MORNING feed! You will be greeted good morning by type bot everyday at 5 A.M. in the morning(in the good mornings channel and the D.M.s)!')
             print('REPLACED')
     
     if message.content.lower() == '$$type bot help' :
