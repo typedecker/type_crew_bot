@@ -30,12 +30,12 @@ async def tasks_loop() :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
                 now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
-                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 16, 35, 000000, tzinfo = morn_time.tzinfo)
+                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 16, 39, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz:
                     print('WE R DOING THE JOB MY DUDE!')
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
-                    await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions] + '!'))
+                    await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
                     #add one day to schedule_time to repeat on next day
                     morn_time+= datetime.timedelta(days = 1) # MIGHT NOT BE NEEDED NOW WE WILL SEE...
                 # ----------------------------
