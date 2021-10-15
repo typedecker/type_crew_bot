@@ -508,7 +508,7 @@ async def on_message(message):
                 if message.author in tz_entry.mentions :
                     await message.channel.send('Your timezone has already been registered. Please ask the admins if you want to reset it.')
                 else :
-                    await tz_entry.edit(tz_entry.content + message.author.mention)
+                    await tz_entry.edit(content = (tz_entry.content + message.author.mention))
                     print('LOLOL DOING')
                 found = True
         if not found :
