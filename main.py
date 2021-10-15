@@ -36,7 +36,7 @@ async def tasks_loop() :
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
                     good_morn_msgs = await good_morn_channel.history().flatten()
-                    if len([msg for msg in good_morn_msgs if msg.created_at.now(tz) >= morn_time and msg.author == client.user]) == 0 :
+                    if len([msg for msg in good_morn_msgs if msg.created_at.now(pytz.timezone(tz)) >= morn_time and msg.author == client.user]) == 0 :
                         await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
                         for user in tz_entry.mentions :
                             if user.dm_channel == None :
