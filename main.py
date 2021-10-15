@@ -36,7 +36,7 @@ async def tasks_loop() :
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
                     good_morn_msgs = await good_morn_channel.history().flatten()
-                    if len([msg for msg in good_morn_msgs if msg.created_at >= morn_time]) == 0 :
+                    if len([msg for msg in good_morn_msgs if msg.created_at >= morn_time and msg.author == client.user]) == 0 :
                         await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
                     # # add one day to schedule_time to repeat on next day
                     # morn_time+= datetime.timedelta(days = 1) # MIGHT NOT BE NEEDED NOW WE WILL SEE...
