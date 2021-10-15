@@ -32,11 +32,12 @@ async def tasks_loop() :
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 5, 00, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz:
-                    print('WE R DOING THE JOB MY DUDE!')
+                    print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
                     good_morn_msgs = await good_morn_channel.history().flatten()
                     if len([msg for msg in good_morn_msgs if msg.created_at.now(pytz.timezone(tz)) >= morn_time and msg.author == client.user]) == 0 :
+                        print('MY DUDE WE CHECKED WE CAN DO THE JOB DEFINITELY')
                         await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
                         for user in tz_entry.mentions :
                             if user.dm_channel == None :
