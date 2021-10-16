@@ -56,9 +56,6 @@ async def on_ready():
     
     game = discord.Game("CWL for TYPE CREW in Clash Of Clans..Hehe ;)")
     await client.change_presence(activity = game)
-    
-    whysopro_the_oversmart_boi = [member for member in client.guilds[0].members if member.name == 'whysopro'][0]
-    await whysopro_the_oversmart_boi.dm_channel.send('You oversmart boi u thought i could not read the message u sent me, i sent that message to typedecker master now. LOLOL tryna hide it from him but now he knows the message')
     return
 
 @client.event
