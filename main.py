@@ -19,20 +19,20 @@ async def tasks_loop() :
     await client.wait_until_ready()
     
     while not client.is_closed():
-        print('YOOOHH LOOPING AND CHECKING')
+        # print('YOOOHH LOOPING AND CHECKING')
         # TIMEZONE BASED GOOD MORNING
         # now = datetime.datetime.now()
         timezone_storage_channel = [channel for channel in client.guilds[0].channels if channel.name == 'timezone_storage' and channel.category.name == 'TYPE BOT STORAGE'][0] # TYPE BOT IS ONLY FOR OUR SERVER SO ONLY OUR SERVER IS THERE IN THE LIST.
         timezones = await timezone_storage_channel.history().flatten()
         if timezones != [] :
-            print('REACHED INSIDE MEANS TIMEZONES CHANNEL IS NOT EMPTY')
+            # print('REACHED INSIDE MEANS TIMEZONES CHANNEL IS NOT EMPTY')
             for tz_entry in timezones :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
                 now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 5, 00, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz:
-                    print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
+                    # print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
                     good_morn_msgs = await good_morn_channel.history().flatten()
