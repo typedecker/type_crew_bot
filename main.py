@@ -30,14 +30,14 @@ async def tasks_loop() :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
                 now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
-                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 12, 48, 000000, tzinfo = morn_time.tzinfo)
+                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 12, 50, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz :
                     # print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
                     #JOB
                     good_morn_channel = [channel for channel in client.guilds[0].channels if channel.name == 'good-mornings' and channel.category.name == 'Normal Conversations'][0]
                     good_morn_msgs = await good_morn_channel.history().flatten()
                     if len([msg for msg in good_morn_msgs if pytz.timezone(tz).localize(msg.created_at) >= morn_time and msg.author == client.user]) == 0 :
-                        print('MY DUDE WE CHECKED WE CAN DO THE JOB DEFINITELY', [pytz.timezone(tz).localize(msg.created_at).strftime("%y-%m-%d-%H-%M") for msg in good_morn_msgs if pytz.timezone(tz).localize(msg.created_at) >= morn_time and msg.author == client.user])
+                        print('MY DUDE WE CHECKED WE CAN DO THE JOB DEFINITELY', [pytz.timezone(tz).localize(msg.created_at).strftime("%y-%m-%d-%H-%M") for msg in good_morn_msgs if msg.author == client.user])
                         await good_morn_channel.send('Good morning ' + ' '.join([user.mention for user in tz_entry.mentions]) + '!')
                         for user in tz_entry.mentions :
                             if user.dm_channel == None :
