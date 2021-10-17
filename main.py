@@ -30,7 +30,7 @@ async def tasks_loop() :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
                 now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
-                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 1, 25, 000000, tzinfo = morn_time.tzinfo)
+                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 13, 30, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz :
                     # print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
                     #JOB
