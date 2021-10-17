@@ -30,7 +30,7 @@ async def tasks_loop() :
                 tz = tz_entry.content[ : tz_entry.content.index(':')]
                 now_for_tz = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
                 morn_time = datetime.datetime.now(pytz.timezone(tz)) #(year, month, day, hour, minute, second, microsecond)
-                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 5, 00, 000000, tzinfo = morn_time.tzinfo)
+                morn_time = datetime.datetime(morn_time.year, morn_time.month, morn_time.day, 12, 38, 000000, tzinfo = morn_time.tzinfo)
                 if morn_time <= now_for_tz:
                     # print('WE R tryna DOING THE JOB MY DUDE! BUT WE WILL CHECK ONCE HEHE')
                     #JOB
@@ -215,10 +215,9 @@ async def on_guild_channel_delete(channel) :
 
 @client.event
 async def on_message(message):
-    print('MESSAGE AUTHOR NAME:', message.author.name, 'MESSAGE AUTHOR ID:', message.author.id, 'MESSAGE AUTHOR DISCRIMINATOR!', message.author.discriminator, 'MSG-CONTENT', message.content)
     if message.author == client.user :
         return
-    
+    print('MESSAGE AUTHOR NAME:', message.author.name, 'MESSAGE AUTHOR ID:', message.author.id, 'MESSAGE AUTHOR DISCRIMINATOR!', message.author.discriminator, 'MSG-CONTENT', message.content)
     if message.author.name == ADMIN and message.author.discriminator == ADMIN_DISCRIMINATOR :
         print('ADMIN KA JADOO!!!!')
         if message.content.lower().startswith('$$type bot the following players did not attack ') :
@@ -413,7 +412,7 @@ async def on_message(message):
                 await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
                 if target.dm_channel == None :
                     await target.create_dm()
-                await message.channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
+                await target.dm_channel.send('So unfortunate ' + target.name + '! You have been demoted from ' + demote_role.name)
             else :
                 await message.channel.send('The member already does not have that role.')
         elif message.content.lower().startswith('$$type bot mute ') :
